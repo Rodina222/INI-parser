@@ -15,13 +15,13 @@ type (
 
 type INI_Parser map[string]INI_section
 
-func LoadFromFile(filename string) string {
+func LoadFromFile(filename string) (string, error) {
 
 	// Open the file for reading
 	file, err := os.Open(filename)
 
 	if err != nil {
-		fmt.Println("Error while opening the file!")
+		return "", errors.New("Error while opening the file!")
 	}
 
 	// Scheduling closing the file after the function finish reading its content
@@ -48,13 +48,13 @@ func LoadFromFile(filename string) string {
 	// Check for errors during scanning
 
 	if scan_err := scanner.Err(); scan_err != nil {
-		fmt.Println("Error while scanning the file!")
+		return "", errors.New("Error while scanning the file!")
 	}
 
 	// Get the concatenated string
 	file_data := builder.String()
 
-	return file_data
+	return file_data, nil
 
 }
 
@@ -216,7 +216,7 @@ func SaveToFile(ini_data string) error {
 func main() {
 
 	// test a working file
-	file_data := LoadFromFile("config.ini")
+	file_data, error := LoadFromFile("config.ini")
 
 	//fmt.Println(file_data)
 
@@ -235,7 +235,7 @@ func main() {
 		fmt.Println(string_data)
 		fmt.Println(INI_sections)
 		section_names := GetSectionNames(INI_sections)
-		fmt.Println("Hello from Section_names!", section_names)
+		fmt.Println("Section_names: ", section_names)
 
 		value, error := GetValue(INI_sections, "Email", "password")
 
@@ -250,7 +250,7 @@ func main() {
 		}
 
 		str_data := ToString(INI_sections)
-		fmt.Println("string map!", str_data)
+		fmt.Println("string map:", str_data)
 
 		e := SaveToFile(str_data)
 
@@ -261,7 +261,7 @@ func main() {
 	}
 
 	// test a failed file
-	failed_file := LoadFromFile("failed_file1.ini")
+	failed_file, error := LoadFromFile("failed_file1.ini")
 	sections, error := GetSections(failed_file)
 
 	if error != nil {
