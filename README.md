@@ -19,7 +19,7 @@ or from a string! : `string_data := LoadFromString(config_data string)`  where c
 `error := SetValue(INI_data &INI_sections, section_name string, key string, value string)`.
 6. You can also convert the INI sections and data to string using the ToString function as follows: `str_data := ToString(INI_data INI_sections)`.
 7. Finally you can save all your changes back into an INI file as follows: error := `SaveToFile(str_data string)`
-- *I hope it will be help you!*
+- *I hope it will help you!*
 
 
 
