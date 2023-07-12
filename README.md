@@ -1,1 +1,1 @@
-# INI-Parser-Rodina
+# INIParser-Rodina
