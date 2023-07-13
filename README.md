@@ -1,4 +1,4 @@
-# __INI_Parser_Library__
+# __INIParser_Library__
 
 This is a useful package that contains Golang functions for parsing simple INI configuration files.
 
@@ -17,75 +17,79 @@ This is a useful package that contains Golang functions for parsing simple INI c
 
 
 1. Load the package to your project as follows:
+
 `import "github.com/codescalersinternships/INIParser-Rodina"`.
 
-2. Load the configuration data as follows:
-from a file:
-`fileData, error := LoadFromFile(/path/to/file.ini)` 
-or from a string :
- `stringData := LoadFromString([section1]\nkey=value\n[section2]\nkey=value\n..etc)`  
- where data is the INI configuration data in string format.
+2. Load the configuration data as follows:<br>
+from a file:<br>
+`fileData, error := LoadFromFile(/path/to/file.ini)`
 
-3. Create a new ini Parser object using "NewINIParser" function:
-iniParser := iniparser.NewINIParser()
+ or from a string :<br>
+ `stringData := LoadFromString([section1]\nkey=value\n[section2]\nkey=value\n..etc)`  <br>
 
-4. Obtain all sections in the form of a map of key-value pairs as follows:
+
+5. Create a new ini Parser object using "NewINIParser" function:<br>
+
+`iniParser := iniparser.NewINIParser()`
+
+5. Obtain all sections in the form of a map of key-value pairs as follows:<br>
  `iniMap := GetSections()`
 
-5. Obtain sections names only in the form of a slice as follows:
+6. Obtain sections names only in the form of a slice as follows:<br>
  `sectionNames := GetSectionNames()`
 
-6. Get configuration values by section and key as follows:
+7. Get configuration values by section and key as follows:<br>
  `value, error := GetValue("section" , "key")`.
 
-5. Update key values or set values for new keys as follows: 
+5. Update key values or set values for new keys as follows: <br>
 `error := SetValue("section" ,"key" , "value")`.
 
-6. Convert the INI map to string using the ToString function as follows:
+6. Convert the INI map to string using the ToString function as follows:<br>
  `strData := ToString()`.
 
-7. Finally saving all changes back into an INI file as follows: 
-error := `SaveToFile("/path/to/file.ini")`
+7. Finally saving all changes back into an INI file as follows: <br>
+`error := SaveToFile("/path/to/file.ini")`
 
 ### __Here is a guide of error messages returned by the parser when an error occurred:__
 
-iniparser.ErrInvalidExtension
-iniparser.ErrInvalidSyntax
-iniparser.ErrKeyNotExist
-iniparser.ErrSectionAlreadyExists
-iniparser.ErrKeyNotFound
-iniparser.ErrEmptyKey
-iniparser.ErrValuesEmpty
+`iniparser.ErrInvalidExtension` <br>
+`iniparser.ErrInvalidSyntax` <br>
+`iniparser.ErrKeyNotExist` <br>
+`iniparser.ErrSectionAlreadyExists` <br>
+`iniparser.ErrKeyNotFound` <br>
+`iniparser.ErrEmptyKey` <br>
+`iniparser.ErrValuesEmpty` <br>
 
-### __Here is an example for a valid INI File:__
+### __Here is an example of a valid INI File:__
 
-`[NETWORK]
-host = example.com
-port = 7878
+[NETWORK] <br>
+host = example.com <br>
+port = 7878<br>
 
-[database]
-host = localhost
-port = 5432
-username = postgres
-password = password
+[database]<br>
+host = localhost<br>
+port = 5432<br>
+username = postgres<br>
+password = password<br>
 
-[Email]
-username = host_email.com
-password = 12345
+[Email]<br>
+username = host_email.com<br>
+password = 12345<br>
 
-[LOCAL]
-user = terry`
+[LOCAL]<br>
+user = terry<br>
+
 
 ### __Here is a guide for testing:__
 
-1. Install the needed dependencies as follows:
+1. Install the needed dependencies as follows:<br>
 `go get -d ./....` 
 
-2. Run all the tests as follows:  
+2. Run all the tests as follows:  <br>
 `go test ./....`
-If all tests pass on, the result should show that the tests were successful. If any tests fail, the output will indicate which tests failed.
+<br>If all tests pass on, the result should show that the tests were successful. If any tests fail, the output will indicate which tests failed.
 
-3. Run the test for a method as follows: 
+3. Run the test for a method as follows: <br>
 `go test -run TestMyFunction`
 
 
