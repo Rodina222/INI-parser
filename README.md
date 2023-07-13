@@ -91,15 +91,3 @@ user = terry<br>
 
 3. Run the test for a method as follows: <br>
 `go test -run TestMyFunction`
-
-
-
-
-
-
-
-
-
-
-
-
