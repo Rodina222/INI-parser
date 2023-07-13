@@ -1,1 +1,1 @@
-# INIParser-Rodina
+# __INIParser Package__
