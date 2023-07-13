@@ -1,4 +1,4 @@
-# __INIParser_Library__
+# __INIParser Package__
 
 This is a useful package that contains Golang functions for parsing simple INI configuration files.
 
