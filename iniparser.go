@@ -8,7 +8,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"sort"
 	"strings"
 )
 
@@ -21,13 +20,19 @@ var (
 	ErrInvalidSyntax = errors.New("invalid ini syntax")
 
 	//ErrSectionNotFound is returned when trying to get the value for a key in a non existent section
-	ErrSectionNotFound = errors.New("section you entered doesn't exist")
+	ErrSectionNotFound = errors.New("key you entered doesn't exist")
+
+	//ErrSectionAlreadyExists is returned when there are two sections with the same name
+	ErrSectionAlreadyExists = errors.New("section you entered already exists")
 
 	//ErrKeyNotFound is returned when trying to get the value for a key that doesn't exist
-	ErrKeyNotFound = errors.New("the key you entered doesn't exist")
+	ErrKeyNotFound = errors.New("key you entered doesn't exist")
+
+	// ErrEmptyKey is returned when a line has a value without key before the equal sign
+	ErrEmptyKey = errors.New("key is empty")
 
 	//ErrKeyEmptyValue is returned when not entering the section name or key
-	ErrKeyEmptyValue = errors.New("section name or key can't be empty")
+	ErrValuesEmpty = errors.New("section name or key can't be empty")
 )
 
 // INISection represents a section in the INI config file
@@ -38,7 +43,7 @@ type INIParser struct {
 	sections map[string]INISection
 }
 
-// this function is used to create a new INI parser
+// NewINIParser is used to create a new INI parser
 func NewINIParser() INIParser {
 
 	return INIParser{
@@ -49,17 +54,18 @@ func NewINIParser() INIParser {
 // loadFromReader is used to create the map from either a file or a string
 func (parser *INIParser) loadFromReader(reader io.Reader) error {
 
+	parser.sections = make(map[string]INISection)
+
 	// Create a scanner to read the data line by line
 	scanner := bufio.NewScanner(reader)
 
 	index := 0
+	section := ""
 
 	// Read the file line by line
 	for scanner.Scan() {
 
 		index++
-
-		section := ""
 
 		line := strings.TrimSpace(scanner.Text())
 
@@ -68,24 +74,46 @@ func (parser *INIParser) loadFromReader(reader io.Reader) error {
 			continue
 		}
 
+		if line[0] == '[' && line[len(line)-1] == ']' && strings.Count(line, "[") == 1 && strings.Count(line, "]") == 1 {
+
+		}
+
 		// INIsection name starts with "["and ends with "]" and repeated only once
 		if line[0] == '[' && line[len(line)-1] == ']' && strings.Count(line, "[") == 1 && strings.Count(line, "]") == 1 {
 
 			section = strings.TrimSpace(line[1 : len(line)-1])
+
+			// check section is not empty
+			if len(section) == 0 {
+				return fmt.Errorf("%w: invalid section at line %d", ErrInvalidSyntax, index)
+			}
+
+			// check section does not exist
+			_, ok := parser.sections[section]
+			if ok {
+
+				return ErrSectionAlreadyExists
+			}
+			// make a new section
 			parser.sections[section] = make(INISection)
 			continue
-
 		}
 
 		// valid key-pair line
-		if strings.Contains(line, "=") {
+		if strings.Contains(line, "=") && section != "" {
 
 			parts := strings.SplitN(line, "=", 2)
-			key := parts[0]
-			value := parts[1]
-			parser.sections[section][key] = value
-			continue
+			key := strings.TrimSpace(parts[0])
 
+			// check whether the key is empty or not
+			if key != "" {
+
+				value := strings.TrimSpace(parts[1])
+				parser.sections[section][key] = value
+				continue
+			}
+
+			return ErrEmptyKey
 		}
 
 		//invalid syntax with specifing the number of line that has the error
@@ -116,29 +144,18 @@ func (parser *INIParser) LoadFromFile(path string) error {
 
 	reader := strings.NewReader(string(file))
 
-	error := parser.loadFromReader(reader)
-
-	if error != nil {
-		return error
-	}
-
-	return nil
+	return parser.loadFromReader(reader)
 }
 
 // LoadFromFile is responsible for loading the INI string data into a reader and sends it to loadFromReader method
 func (parser *INIParser) LoadFromString(data string) error {
 
 	reader := strings.NewReader(data)
-	err := parser.loadFromReader(reader)
+	return parser.loadFromReader(reader)
 
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
 
-// GetSection returns the whole INI sections data stored in the map
+// GetSections returns the whole INI sections data stored in the map
 func (parser *INIParser) GetSections() map[string]INISection {
 
 	return parser.sections
@@ -147,12 +164,11 @@ func (parser *INIParser) GetSections() map[string]INISection {
 // GetSectionNames returns the INI sections names stored in the map
 func (parser *INIParser) GetSectionNames() []string {
 
-	sectionNames := make([]string, len(parser.sections))
+	sectionNames := make([]string, 0, len(parser.sections))
 	for key := range parser.sections {
 		sectionNames = append(sectionNames, key)
 	}
-	sort.Strings(sectionNames)
-	fmt.Println("Section names:", sectionNames)
+
 	return sectionNames
 
 }
@@ -161,7 +177,7 @@ func (parser *INIParser) GetSectionNames() []string {
 func (parser *INIParser) GetValue(sectionName, key string) (string, error) {
 
 	if sectionName == "" || key == "" {
-		return "", ErrKeyEmptyValue
+		return "", ErrValuesEmpty
 	}
 
 	section, ok := parser.sections[sectionName]
@@ -181,12 +197,14 @@ func (parser *INIParser) GetValue(sectionName, key string) (string, error) {
 func (parser *INIParser) SetValue(SectionName, key, value string) error {
 
 	if SectionName == "" || key == "" {
-		return ErrKeyEmptyValue
+		return ErrValuesEmpty
 	}
 
 	section, ok := parser.sections[SectionName]
 
+	// create a new section if section does not exist
 	if !ok {
+		section = make(INISection)
 		parser.sections[SectionName] = section
 	}
 
@@ -201,15 +219,15 @@ func (parser *INIParser) String() string {
 	var sb strings.Builder
 
 	for key, value := range parser.sections {
-		section_name := fmt.Sprintf("[%s]\n", key)
-		sb.WriteString(section_name)
+		sectionName := fmt.Sprintf("[%s]\n", key)
+		sb.WriteString(sectionName)
 
 		// Convert the section to a string
 		for k, v := range value {
-			pair := fmt.Sprintf("%s=%s\n", k, v)
+			pair := fmt.Sprintf("%s = %s\n", k, v)
 			sb.WriteString(pair)
 		}
-		sb.WriteString("\n")
+		//sb.WriteString("\n")
 
 	}
 	return sb.String()
@@ -218,15 +236,17 @@ func (parser *INIParser) String() string {
 // SaveToFile saves the ini data to a file
 func (parser *INIParser) SaveToFile(path string) error {
 
+	// check the file extension
+	fileExt := filepath.Ext(path)
+	if fileExt != ".ini" {
+		return ErrInvalidExtension
+	}
+
 	// Convert the ini data to string
 	ini_data := parser.String()
 
 	// Write the string to a file
 	// 0644 is the file permissions which means that the file is readable and writable by the owner, and readable by everyone else
-	err := ioutil.WriteFile(path, []byte(ini_data), 0644)
-	if err != nil {
-		return err
-	}
+	return ioutil.WriteFile(path, []byte(ini_data), 0644)
 
-	return nil
 }
