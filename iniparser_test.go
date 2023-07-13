@@ -320,7 +320,6 @@ func TestString(t *testing.T) {
 
 	str := `[NETWORK]
 	host = example.com
-	port = 7878
 	
 	`
 
