@@ -11,7 +11,6 @@ import (
 )
 
 var (
-
 	// ErrInvalidExtension is returned when the extension of the input file is not ".ini"
 	ErrInvalidExtension = errors.New("the file should have an ini extension (.ini)")
 
