@@ -73,10 +73,6 @@ func (parser *INIParser) loadFromReader(reader io.Reader) error {
 			continue
 		}
 
-		if line[0] == '[' && line[len(line)-1] == ']' && strings.Count(line, "[") == 1 && strings.Count(line, "]") == 1 {
-
-		}
-
 		// INIsection name starts with "["and ends with "]" and repeated only once
 		if line[0] == '[' && line[len(line)-1] == ']' && strings.Count(line, "[") == 1 && strings.Count(line, "]") == 1 {
 
