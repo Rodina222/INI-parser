@@ -320,7 +320,7 @@ func TestString(t *testing.T) {
 
 	str := `[NETWORK]
 	host = example.com
-	
+	port = 7878
 	`
 
 	// Remove all occurrences of \t from the string
