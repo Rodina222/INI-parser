@@ -227,7 +227,7 @@ func (parser *INIParser) String() string {
 			pair := fmt.Sprintf("%s = %s\n", k, v)
 			sb.WriteString(pair)
 		}
-		//sb.WriteString("\n")
+		sb.WriteString("\n")
 
 	}
 	return sb.String()
