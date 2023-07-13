@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -247,6 +246,6 @@ func (parser *INIParser) SaveToFile(path string) error {
 
 	// Write the string to a file
 	// 0644 is the file permissions which means that the file is readable and writable by the owner, and readable by everyone else
-	return ioutil.WriteFile(path, []byte(ini_data), 0644)
+	return os.WriteFile(path, []byte(ini_data), 0644)
 
 }
