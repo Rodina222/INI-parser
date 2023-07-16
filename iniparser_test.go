@@ -249,21 +249,33 @@ func TestGetValue(t *testing.T) {
 
 	t.Run("input section name  or key is empty ", func(t *testing.T) {
 
-		_, err := parser.GetValue("", "password")
+		err := parser.LoadFromString(iniValidFormat)
+
+		assert.NoError(t, err)
+
+		_, err = parser.GetValue("", "password")
 
 		assert.Equal(t, ErrValuesEmpty, err, "want %q but got %q", ErrValuesEmpty, err)
 	})
 
 	t.Run("get value from non existent section", func(t *testing.T) {
 
-		_, err := parser.GetValue("company", "password")
+		err := parser.LoadFromString(iniValidFormat)
+
+		assert.NoError(t, err)
+
+		_, err = parser.GetValue("company", "password")
 
 		assert.Equal(t, ErrSectionNotFound, err, "want %q but got %q", ErrSectionNotFound, err)
 	})
 
 	t.Run("get value for a non existent key", func(t *testing.T) {
 
-		_, err := parser.GetValue("Email", "pass")
+		err := parser.LoadFromString(iniValidFormat)
+
+		assert.NoError(t, err)
+
+		_, err = parser.GetValue("database", "pass")
 
 		assert.Equal(t, ErrKeyNotFound, err, "want %q but got %q", ErrKeyNotFound, err)
 	})
