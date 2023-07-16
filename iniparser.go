@@ -33,6 +33,7 @@ var (
 	ErrValuesEmpty = errors.New("section name or key can't be empty")
 )
 
+
 // INISection represents a section in the INI config file
 type INISection map[string]string
 
