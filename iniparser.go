@@ -18,7 +18,7 @@ var (
 	ErrInvalidSyntax = errors.New("invalid ini syntax")
 
 	//ErrSectionNotFound is returned when trying to get the value for a key in a non existent section
-	ErrSectionNotFound = errors.New("key you entered doesn't exist")
+	ErrSectionNotFound = errors.New("section you entered doesn't exist")
 
 	//ErrSectionAlreadyExists is returned when there are two sections with the same name
 	ErrSectionAlreadyExists = errors.New("section you entered already exists")
@@ -100,14 +100,13 @@ func (parser *INIParser) loadFromReader(reader io.Reader) error {
 			key := strings.TrimSpace(parts[0])
 
 			// check whether the key is empty or not
-			if key != "" {
+			if len(key) == 0 {
+				return ErrEmptyKey
+			}	
 
-				value := strings.TrimSpace(parts[1])
-				parser.sections[section][key] = value
-				continue
-			}
-
-			return ErrEmptyKey
+			value := strings.TrimSpace(parts[1])
+			parser.sections[section][key] = value
+			continue			
 		}
 
 		//invalid syntax with specifing the number of line that has the error
@@ -194,15 +193,13 @@ func (parser *INIParser) SetValue(SectionName, key, value string) error {
 		return ErrValuesEmpty
 	}
 
-	section, ok := parser.sections[SectionName]
+	_, ok := parser.sections[SectionName]
 
 	// create a new section if section does not exist
 	if !ok {
-		section = make(INISection)
-		parser.sections[SectionName] = section
+		parser.sections[SectionName] = make(INISection)
 	}
-
-	section[key] = value
+        parser.sections[SectionName][key] = value
 
 	return nil
 }
