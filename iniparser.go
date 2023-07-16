@@ -11,6 +11,7 @@ import (
 )
 
 var (
+
 	// ErrInvalidExtension is returned when the extension of the input file is not ".ini"
 	ErrInvalidExtension = errors.New("the file should have an ini extension (.ini)")
 
@@ -32,7 +33,6 @@ var (
 	//ErrKeyEmptyValue is returned when not entering the section name or key
 	ErrValuesEmpty = errors.New("section name or key can't be empty")
 )
-
 
 // INISection represents a section in the INI config file
 type INISection map[string]string
@@ -72,7 +72,6 @@ func (parser *INIParser) loadFromReader(reader io.Reader) error {
 		if len(line) == 0 || line[0] == ';' || line[0] == '#' {
 			continue
 		}
-
 		// INIsection name starts with "["and ends with "]" and repeated only once
 		if line[0] == '[' && line[len(line)-1] == ']' && strings.Count(line, "[") == 1 && strings.Count(line, "]") == 1 {
 
@@ -103,11 +102,11 @@ func (parser *INIParser) loadFromReader(reader io.Reader) error {
 			// check whether the key is empty or not
 			if len(key) == 0 {
 				return ErrEmptyKey
-			}	
+			}
 
 			value := strings.TrimSpace(parts[1])
 			parser.sections[section][key] = value
-			continue			
+			continue
 		}
 
 		//invalid syntax with specifing the number of line that has the error
@@ -200,7 +199,7 @@ func (parser *INIParser) SetValue(SectionName, key, value string) error {
 	if !ok {
 		parser.sections[SectionName] = make(INISection)
 	}
-        parser.sections[SectionName][key] = value
+	parser.sections[SectionName][key] = value
 
 	return nil
 }
