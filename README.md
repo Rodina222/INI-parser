@@ -116,7 +116,7 @@ go test ./....
 If all tests pass on, the result should show that the tests were successful as follows:
 ```ini
 PASS
-ok      github.com/codescalersinternships/INIParser-Rodina       0.004s
+ok      github.com/codescalersinternships/INIParser-Rodina       0.002s
 ```
 If any tests fail, the output will indicate which tests failed.
 
