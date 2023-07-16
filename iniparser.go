@@ -173,12 +173,11 @@ func (parser *INIParser) GetValue(sectionName, key string) (string, error) {
 		return "", ErrValuesEmpty
 	}
 
-	section, ok := parser.sections[sectionName]
-	if !ok {
+	if parser.sections[sectionName] == nil {
 		return "", ErrSectionNotFound
 	}
 
-	value, ok := section[key]
+	value, ok := parser.sections[sectionName][key]
 	if !ok {
 		return "", ErrKeyNotFound
 	}
