@@ -11,6 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+
 const iniValidFormat = `
 [NETWORK] 
 host= example.com
