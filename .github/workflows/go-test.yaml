@@ -40,9 +40,3 @@ jobs:
         with:
           gofmt-path: ./
           gofmt-flags: -l -d
-          
-      - name: Go format code
-        uses: Jerome1337/gofmt-action@v1.0.5
-        with:
-          gofmt-path: './'
-          gofmt-flags: '-l -d'
